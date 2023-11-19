@@ -7,6 +7,7 @@
 
 #include <deque>
 
+
 #define USERMOD_ID_BUZZER 900
 #ifndef USERMOD_BUZZER_PIN
 #define USERMOD_BUZZER_PIN 13
@@ -102,15 +103,39 @@
 
 class ChristmasSongUsermod : public Usermod {
   private:
+  // Private class members. You can declare variables and functions only accessible to your usermod here
+    bool enabled = false;
+    bool initDone = false;
+    
     unsigned long lastTime_ = 0;
     unsigned long delay_ = 0;
     std::deque<std::pair<uint16_t, unsigned long>> sequence_ {}; // Freq, delay
+
+    // string that are used multiple time (this will save some flash memory)
+    static const char _name[];
+    static const char _enabled[];
+
   public:
+
+   // non WLED related methods, may be used for data exchange between usermods (non-inline methods should be defined out of class)
+
+    /**
+     * Enable/Disable the usermod
+     */
+    inline void enable(bool enable) { enabled = enable; }
+
+    /**
+     * Get usermod enabled/disabled state
+     */
+    inline bool isEnabled() { return enabled; }
+
+
     /*
      * setup() is called once at boot. WiFi is not yet connected at this point.
      * You can use it to initialize variables, sensors or similar.
      */
     void setup() {
+      
       // Setup the pin, and default to LOW
       pinMode(USERMOD_BUZZER_PIN, OUTPUT);
       digitalWrite(USERMOD_BUZZER_PIN, LOW);
@@ -145,6 +170,7 @@ class ChristmasSongUsermod : public Usermod {
      * loop() is called continuously. Here you can check for events, read sensors, etc.
      */
     void loop() {
+      
       if (sequence_.size() < 1) return; // Wait until there is a sequence
       if (millis() - lastTime_ <= delay_) return; // Wait until delay has elapsed
 
@@ -157,6 +183,45 @@ class ChristmasSongUsermod : public Usermod {
 
       lastTime_ = millis();
     }
+        /*
+     * addToJsonInfo() can be used to add custom entries to the /json/info part of the JSON API.
+     * Creating an "u" object allows you to add custom key/value pairs to the Info section of the WLED web UI.
+     * Below it is shown how this could be used for e.g. a light sensor
+     */
+    void addToJsonInfo(JsonObject& root)
+    {
+      // if "u" object does not exist yet wee need to create it
+      JsonObject user = root["u"];
+      if (user.isNull()) user = root.createNestedObject("u");
+
+      //this code adds "u":{"ExampleUsermod":[20," lux"]} to the info object
+      //int reading = 20;
+      //JsonArray lightArr = user.createNestedArray(FPSTR(_name))); //name
+      //lightArr.add(reading); //value
+      //lightArr.add(F(" lux")); //unit
+
+      // if you are implementing a sensor usermod, you may publish sensor data
+      //JsonObject sensor = root[F("sensor")];
+      //if (sensor.isNull()) sensor = root.createNestedObject(F("sensor"));
+      //temp = sensor.createNestedArray(F("light"));
+      //temp.add(reading);
+      //temp.add(F("lux"));
+    }
+
+
+    /*
+     * addToJsonState() can be used to add custom entries to the /json/state part of the JSON API (state object).
+     * Values in the state object may be modified by connected clients
+     */
+    void addToJsonState(JsonObject& root)
+    {
+      if (!initDone || !enabled) return;  // prevent crash on boot applyPreset()
+
+      JsonObject usermod = root[FPSTR(_name)];
+      if (usermod.isNull()) usermod = root.createNestedObject(FPSTR(_name));
+
+      //usermod["user0"] = userVar0;
+    }
 
 
     /*
@@ -168,3 +233,10 @@ class ChristmasSongUsermod : public Usermod {
       return USERMOD_ID_BUZZER;
     }
 };
+
+// add more strings here to reduce flash memory usage
+const char ChristmasSongUsermod::_name[]    PROGMEM = "Christmas";
+const char ChristmasSongUsermod::_enabled[] PROGMEM = "enabled";
+
+
+// implementation of non-inline member methods

@@ -474,6 +474,13 @@ bool deserializeState(JsonObject root, byte callMode, byte presetId)
   stateUpdated(callMode);
   if (presetToRestore) currentPreset = presetToRestore;
 
+
+  bool onMusic = root["onMusic"];
+  Serial.println(onMusic);
+  if (onMusic == 1) Serial.println("Hi");
+  else Serial.println("HiNot");
+
+
   return stateResponse;
 }
 

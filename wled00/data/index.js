@@ -1,6 +1,7 @@
 //page js
 var loc = false, locip, locproto = "http:";
 var isOn = false, nlA = false, isLv = false, isInfo = false, isNodes = false, syncSend = false, syncTglRecv = true;
+var isOnMusic = false, nlA = false, isLv = false, isInfo = false, isNodes = false, syncSend = false, syncTglRecv = true;
 var hasWhite = false, hasRGB = false, hasCCT = false;
 var nlDur = 60, nlTar = 0;
 var nlMode = false;
@@ -1194,7 +1195,7 @@ function updateUI()
 	gId('buttonPower').className = (isOn) ? 'active':'';
 	gId('buttonNl').className = (nlA) ? 'active':'';
 	gId('buttonSync').className = (syncSend) ? 'active':'';
-
+	gId('test').className = (isOnMusic) ? 'active':'';
 	updateSelectedFx();
 	updateSelectedPalette(selectedPal); // must be after updateSelectedFx() to un-hide color slots for * palettes
 
@@ -1731,6 +1732,18 @@ function toggleNodes()
 	if (isNodes) loadNodes();
 	gId('nodes').style.transform = (isNodes) ? "translateY(0px)":"translateY(100%)";
 	gId('buttonNodes').className = (isNodes) ? "active":"";
+}
+
+function toggleMusic()
+{
+	isOnMusic = !isOnMusic;
+	var obj = {"onMusic": isOnMusic};
+	if (isOnMusic && lastinfo && lastinfo.live && lastinfo.liveseg>=0) {
+		obj.live = false;
+		obj.seg = [];
+		obj.seg[0] = {"id": lastinfo.liveseg, "frz": false};
+	}
+	requestJson(obj);
 }
 
 function makeSeg()
