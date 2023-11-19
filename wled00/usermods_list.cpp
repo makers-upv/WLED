@@ -11,6 +11,8 @@
  */
 //#include "../usermods/EXAMPLE_v2/usermod_v2_example.h"
 
+#define USERMOD_CHRISTMAS_SONG
+
 #ifdef USERMOD_BATTERY
   #include "../usermods/Battery/usermod_v2_Battery.h"
 #endif
@@ -34,6 +36,10 @@
 
 #ifdef USERMOD_BUZZER
   #include "../usermods/buzzer/usermod_v2_buzzer.h"
+#endif
+
+#ifdef USERMOD_CHRISTMAS_SONG
+  #include "../usermods/christmas_song/christmas_song.h"
 #endif
 
 #ifdef USERMOD_SENSORSTOMQTT
@@ -224,6 +230,10 @@ void registerUsermods()
 
   #ifdef USERMOD_BUZZER
   usermods.add(new BuzzerUsermod());
+  #endif
+
+  #ifdef USERMOD_CHRISTMAS_SONG
+  usermods.add(new ChristmasSongUsermod());
   #endif
 
   #ifdef USERMOD_BH1750
