@@ -1,7 +1,6 @@
 //page js
 var loc = false, locip, locproto = "http:";
-var isOn = false, nlA = false, isLv = false, isInfo = false, isNodes = false, syncSend = false, syncTglRecv = true;
-var isOnMusic = false, nlA = false, isLv = false, isInfo = false, isNodes = false, syncSend = false, syncTglRecv = true;
+var isOn = false, nlA = false, isLv = false, isInfo = false, isNodes = false, syncSend = false, syncTglRecv = true, isOnMusic = false;
 var hasWhite = false, hasRGB = false, hasCCT = false;
 var nlDur = 60, nlTar = 0;
 var nlMode = false;
@@ -1738,11 +1737,7 @@ function toggleMusic()
 {
 	isOnMusic = !isOnMusic;
 	var obj = {"onMusic": isOnMusic};
-	if (isOnMusic && lastinfo && lastinfo.live && lastinfo.liveseg>=0) {
-		obj.live = false;
-		obj.seg = [];
-		obj.seg[0] = {"id": lastinfo.liveseg, "frz": false};
-	}
+	
 	requestJson(obj);
 }
 

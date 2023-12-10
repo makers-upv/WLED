@@ -2,6 +2,8 @@
 
 #include "palettes.h"
 
+extern bool  MusicState;
+
 #define JSON_PATH_STATE      1
 #define JSON_PATH_INFO       2
 #define JSON_PATH_STATE_INFO 3
@@ -471,14 +473,16 @@ bool deserializeState(JsonObject root, byte callMode, byte presetId)
     }
   }
 
+  MusicState = root["onMusic"];
+  Serial.println(MusicState);
+  if (MusicState == 1) Serial.println("Hi");
+  else Serial.println("HiNot");
+
   stateUpdated(callMode);
   if (presetToRestore) currentPreset = presetToRestore;
 
 
-  bool onMusic = root["onMusic"];
-  Serial.println(onMusic);
-  if (onMusic == 1) Serial.println("Hi");
-  else Serial.println("HiNot");
+  
 
 
   return stateResponse;

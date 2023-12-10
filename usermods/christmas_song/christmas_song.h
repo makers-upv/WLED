@@ -5,6 +5,7 @@
 
 #include "pitches.h"
 
+
 #include <deque>
 
 
@@ -13,6 +14,7 @@
 #define USERMOD_BUZZER_PIN 13
 #endif
 
+extern bool MusicState ;
 
 // // Jingle Bells
 
@@ -185,7 +187,7 @@ class ChristmasSongUsermod : public Usermod {
      * loop() is called continuously. Here you can check for events, read sensors, etc.
      */
     void loop() {
-      
+      if(MusicState == 1){
       if (sequence_.size() < 1) return; // Wait until there is a sequence
       if (millis() - lastTime_ <= delay_) return; // Wait until delay has elapsed
         analogWrite(USERMOD_BUZZER_PIN, 0);
@@ -214,6 +216,9 @@ class ChristmasSongUsermod : public Usermod {
         index = 0;
       }
       lastTime_ = millis();
+    }else{
+        analogWrite(USERMOD_BUZZER_PIN, 0);
+    }
     }
         /*
      * addToJsonInfo() can be used to add custom entries to the /json/info part of the JSON API.

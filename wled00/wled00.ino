@@ -12,6 +12,9 @@
  */
 #include "wled.h"
 
+bool MusicState = 0;
+
+
 void setup() {
   WLED::instance().setup();
 }
