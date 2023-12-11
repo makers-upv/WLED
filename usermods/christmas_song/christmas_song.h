@@ -6,13 +6,12 @@
 #include "pitches.h"
 
 
-#include <deque>
-
-
 #define USERMOD_ID_BUZZER 900
 #ifndef USERMOD_BUZZER_PIN
 #define USERMOD_BUZZER_PIN 13
 #endif
+
+#define SONG_SPEED_FACTOR 1.3 // 1.3 is a good value for Jingle Bells but you can play with it
 
 extern bool MusicState ;
 
@@ -113,7 +112,6 @@ class ChristmasSongUsermod : public Usermod {
     unsigned long delay_ = 0;
     unsigned long delay_2 = 0;
     unsigned int index = 0;
-    std::deque<std::pair<uint16_t, unsigned long>> sequence_ {}; // Freq, delay
 
     // string that are used multiple time (this will save some flash memory)
     static const char _name[];
@@ -139,36 +137,9 @@ class ChristmasSongUsermod : public Usermod {
      * You can use it to initialize variables, sensors or similar.
      */
     void setup() {
-      
       // Setup the pin, and default to LOW
       pinMode(USERMOD_BUZZER_PIN, OUTPUT);
       digitalWrite(USERMOD_BUZZER_PIN, LOW);
-
-      // Set test sequence
-      /*sequence_.push_back({ NOTE_C4, 1000 });
-      sequence_.push_back({ NOTE_D4, 1000 });
-      sequence_.push_back({ NOTE_E4, 1000 });
-      sequence_.push_back({ NOTE_F4, 1000 });
-      sequence_.push_back({ NOTE_G4, 1000 });
-      sequence_.push_back({ NOTE_A4, 1000 });
-      sequence_.push_back({ NOTE_B4, 1000 });
-      sequence_.push_back({ NOTE_C5, 1000 });
-      */
-      sequence_.push_back({ NOTE_E5, 8 });
-      sequence_.push_back({ NOTE_E5, 8 });
-      sequence_.push_back({ NOTE_E5, 4 });
-      sequence_.push_back({ NOTE_E5, 8 });
-      sequence_.push_back({ NOTE_E5, 8 });
-      sequence_.push_back({ NOTE_E5, 4 });
-      sequence_.push_back({ NOTE_E5, 8});
-      sequence_.push_back({ NOTE_G5, 8 });
-      sequence_.push_back({ NOTE_C5, 8 });
-      sequence_.push_back({ NOTE_D5, 8 });
-      sequence_.push_back({ NOTE_E5, 2 });
-
-      
-      // Start PWM
-      analogWrite(USERMOD_BUZZER_PIN, 50);
     }
 
 
@@ -177,47 +148,43 @@ class ChristmasSongUsermod : public Usermod {
      * Use it to initialize network interfaces
      */
     void connected() {
-
-    }
-    void buzz(int targetPin, uint16_t frequency, long length) {
-      sequence_.push_back({ frequency, length });
+      // We do nothing here
     }
 
     /*
      * loop() is called continuously. Here you can check for events, read sensors, etc.
      */
     void loop() {
-      if(MusicState == 1){
-      if (sequence_.size() < 1) return; // Wait until there is a sequence
-      if (millis() - lastTime_ <= delay_) return; // Wait until delay has elapsed
+      // If the music is activated, play the song
+      if(MusicState)
+      {
+        // Wait for the note to finish playing before turning off the PWM signal
+        if (millis() - lastTime_ <= delay_) return; // Wait until delay has elapsed
         analogWrite(USERMOD_BUZZER_PIN, 0);
-        if(millis() - lastTime_ <= delay_2) return;
-        
-        
-      //auto event = sequence_.front();
-      //sequence_.pop_front();
-      
-      // Change frecuency of the actual note and set delay
-      /*analogWriteFreq(event.first);
-      analogWrite(USERMOD_BUZZER_PIN, 50);
-      int noteDuration = 1000 / event.second;
-      delay_ = noteDuration;
-      delay_2 = 1.3* noteDuration;
+        if(millis() - lastTime_ <= delay_2) return; // Wait until delay_2 has elapsed
 
-      lastTime_ = millis();
-      */
-      analogWriteFreq(melody[index]);
-      analogWrite(USERMOD_BUZZER_PIN, 10);
-      int noteDuration = 2000 / tempo[index];
-      delay_ = noteDuration;
-      delay_2 = 1.3* noteDuration;
-      index++;
-      if(index > sizeof(melody)/sizeof(melody[0])){
-        index = 0;
-      }
-      lastTime_ = millis();
-    }else{
-        analogWrite(USERMOD_BUZZER_PIN, 0);
+        // Set pitch frequency to the PWM signal and turn on at 10% duty cycle
+        analogWriteFreq(melody[index]);
+        analogWrite(USERMOD_BUZZER_PIN, 10);
+
+        // Calculate note duration and delay between notes
+        int noteDuration = 2000 / tempo[index];
+        delay_ = noteDuration;
+        delay_2 = SONG_SPEED_FACTOR * noteDuration;
+
+        // Advance to next note and reset index if we reach the end of the song
+        index++;
+        if(index > sizeof(melody)/sizeof(melody[0])) index = 0;
+
+        // Update lastTime_
+        lastTime_ = millis();
+    }else
+    {
+      // Turn off the PWM signal
+      analogWrite(USERMOD_BUZZER_PIN, 0);
+
+      // Reset index
+      index = 0;
     }
     }
         /*

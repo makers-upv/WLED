@@ -307,6 +307,17 @@ bool deserializeState(JsonObject root, byte callMode, byte presetId)
   netDebugEnabled = root[F("debug")] | netDebugEnabled;
   #endif
 
+  // Detect music state change
+  bool musicChangeRequest = root["musicChangeRequest"];
+  // Serial.print("Music change request: "); Serial.println(musicChangeRequest);
+  bool musicOn;
+  if(musicChangeRequest) {
+    musicOn = root["onMusic"];
+    MusicState = musicOn;
+    // Serial.print("Music set to: "); Serial.println(musicOn);
+    return stateResponse;
+  }
+
   bool onBefore = bri;
   getVal(root["bri"], &bri);
 
@@ -473,17 +484,8 @@ bool deserializeState(JsonObject root, byte callMode, byte presetId)
     }
   }
 
-  MusicState = root["onMusic"];
-  Serial.println(MusicState);
-  if (MusicState == 1) Serial.println("Hi");
-  else Serial.println("HiNot");
-
   stateUpdated(callMode);
   if (presetToRestore) currentPreset = presetToRestore;
-
-
-  
-
 
   return stateResponse;
 }

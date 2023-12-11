@@ -1194,7 +1194,7 @@ function updateUI()
 	gId('buttonPower').className = (isOn) ? 'active':'';
 	gId('buttonNl').className = (nlA) ? 'active':'';
 	gId('buttonSync').className = (syncSend) ? 'active':'';
-	gId('test').className = (isOnMusic) ? 'active':'';
+	gId('buttonToggleMusic').className = (isOnMusic) ? 'active':'';
 	updateSelectedFx();
 	updateSelectedPalette(selectedPal); // must be after updateSelectedFx() to un-hide color slots for * palettes
 
@@ -1735,8 +1735,10 @@ function toggleNodes()
 
 function toggleMusic()
 {
+	console.log("Entering toggleMusic...");
 	isOnMusic = !isOnMusic;
-	var obj = {"onMusic": isOnMusic};
+	var obj = {"musicChangeRequest": true, "onMusic": isOnMusic};
+	console.log(obj);
 	
 	requestJson(obj);
 }
