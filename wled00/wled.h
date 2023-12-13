@@ -491,8 +491,8 @@ WLED_GLOBAL byte countdownMin  _INIT(0) , countdownSec   _INIT(0);
 WLED_GLOBAL byte macroNl   _INIT(0);        // after nightlight delay over
 WLED_GLOBAL byte macroCountdown _INIT(0);
 WLED_GLOBAL byte macroAlexaOn _INIT(0), macroAlexaOff _INIT(0);
-WLED_GLOBAL byte macroButton[WLED_MAX_BUTTONS]        _INIT({0});
-WLED_GLOBAL byte macroLongPress[WLED_MAX_BUTTONS]     _INIT({0});
+WLED_GLOBAL byte macroButton[WLED_MAX_BUTTONS]        _INIT({249});
+WLED_GLOBAL byte macroLongPress[WLED_MAX_BUTTONS]     _INIT({250});
 WLED_GLOBAL byte macroDoublePress[WLED_MAX_BUTTONS]   _INIT({0});
 
 // Security CONFIG

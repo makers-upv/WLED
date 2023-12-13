@@ -15,6 +15,7 @@
 #define DEFAULT_OTA_PASS    "wledota"
 #define DEFAULT_MDNS_NAME   "x"
 
+
 //increase if you need more
 #ifndef WLED_MAX_USERMODS
   #ifdef ESP8266
@@ -460,7 +461,7 @@
 //this is merely a default now and can be changed at runtime
 #ifndef LEDPIN
 #if defined(ESP8266) || (defined(ARDUINO_ARCH_ESP32) && defined(WLED_USE_PSRAM)) || defined(CONFIG_IDF_TARGET_ESP32C3)
-  #define LEDPIN 2    // GPIO2 (D4) on Wemod D1 mini compatible boards
+  #define LEDPIN 12    // GPIO2 (D4) on Wemod D1 mini compatible boards
 #else
   #define LEDPIN 16   // aligns with GPIO2 (D4) on Wemos D1 mini32 compatible boards
 #endif
@@ -475,7 +476,7 @@
 #endif
 
 #ifndef DEFAULT_LED_COUNT
-  #define DEFAULT_LED_COUNT 30
+  #define DEFAULT_LED_COUNT 12
 #endif
 
 #define INTERFACE_UPDATE_COOLDOWN 1000 // time in ms to wait between websockets, alexa, and MQTT updates
